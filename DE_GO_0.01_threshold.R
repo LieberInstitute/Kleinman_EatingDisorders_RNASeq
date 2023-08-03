@@ -4,6 +4,8 @@ library(org.Hs.eg.db)
 library(clusterProfiler)
 library(cowplot)
 library(writexl)
+library(enrichplot)
+library(DOSE)
 
 packageVersion("clusterProfiler")
 # [1] ‘4.6.2’
@@ -49,8 +51,12 @@ goCC=enrichGO(gene          = sigem,
 # plot
 dbp=dotplot(goBP,showCategory = 20,title="ED-CT only p<0.01 Biological Process GO")
 c1=cnetplot(goBP,foldChange=sigem,circular=TRUE,colorEdge=TRUE)
+goBPt<- pairwise_termsim(goBP)
+emap=emapplot(goBPt)
 
-cowplot::plot_grid(dbp,dmf,dcc,ncol=3)
+pdf('EDvsCT less01 BP_GO.pdf',height=10,width=30)
+cowplot::plot_grid(dbp,c1,emap,ncol=3)
+dev.off()
 
 write_xlsx(list("BP"=goBP@result,"MF"=goMF@result,"CC"=goCC@result), 
 				'./20230803_01_ED-CT.xlsx')
