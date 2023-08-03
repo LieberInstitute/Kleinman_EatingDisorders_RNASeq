@@ -5,6 +5,11 @@ library(clusterProfiler)
 library(cowplot)
 library(writexl)
 
+packageVersion("clusterProfiler")
+# [1] ‘4.6.2’
+packageVersion("org.Hs.eg.db")
+# [1] ‘3.16.0’
+
 geneUniverse = as.character(sigGeneOV$EntrezID)
 geneUniverse = geneUniverse[!is.na(geneUniverse)]
 
