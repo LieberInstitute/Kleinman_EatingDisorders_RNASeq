@@ -3,6 +3,7 @@ load("DE/ED_contrast_gene_n122.Rdata")
 library(org.Hs.eg.db)
 library(clusterProfiler)
 library(cowplot)
+library(writexl)
 
 geneUniverse = as.character(sigGeneOV$EntrezID)
 geneUniverse = geneUniverse[!is.na(geneUniverse)]
@@ -29,6 +30,7 @@ goMF=enrichGO(gene          = sigem,
               pvalueCutoff  = 0.1,
               qvalueCutoff  = 0.5,
               readable      = TRUE)
+# no sig
 goCC=enrichGO(gene          = sigem,
               universe      = geneUniverse,
               OrgDb         = org.Hs.eg.db,
@@ -37,15 +39,15 @@ goCC=enrichGO(gene          = sigem,
               pvalueCutoff  = 0.1,
               qvalueCutoff  = 0.5,
               readable      = TRUE) 
-
+# no sig
 
 # plot
 dbp=dotplot(goBP,showCategory = 20,title="ED-CT only p<0.01 Biological Process GO")
-dmf=dotplot(goMF,showCategory = 20,title="ED-CT only p<0.01 Molecular Function")
-dcc=dotplot(goCC,showCategory = 20, title="ED-CT only p<0.01 Cellular Component GO")
+
 cowplot::plot_grid(dbp,dmf,dcc,ncol=3)
 
-
+write_xlsx(list("BP"=goBP@result,"MF"=goMF@result,"CC"=goCC@result), 
+				'./20230803_01_ED-CT.xlsx')
 
 print(sessionInfo())
 [1] rappdirs_0.3.3           R.methodsS3_1.8.2        tidyr_1.3.0             
