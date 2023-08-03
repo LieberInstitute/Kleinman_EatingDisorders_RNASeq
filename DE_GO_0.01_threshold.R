@@ -11,10 +11,17 @@ packageVersion("clusterProfiler")
 # [1] ‘4.6.2’
 packageVersion("org.Hs.eg.db")
 # [1] ‘3.16.0’
+ packageVersion("cowplot")
+# [1] ‘1.1.1’
+ packageVersion("enrichplot")
+#[1] ‘1.18.3’
+ packageVersion("DOSE")
+#[1] ‘3.24.2’
 
 geneUniverse = as.character(sigGeneOV$EntrezID)
 geneUniverse = geneUniverse[!is.na(geneUniverse)]
 
+##### ED--CNT 0.01 genes enrichment ####
 id=which(sigGeneCNT$`p_ED-Control`<0.01)
 sigem=as.character(sigGeneCNT$EntrezID[id])
 sigem=sigem[!is.na(sigem)]
@@ -60,6 +67,8 @@ dev.off()
 
 write_xlsx(list("BP"=goBP@result,"MF"=goMF@result,"CC"=goCC@result), 
 				'./20230803_01_ED-CT.xlsx')
+
+
 
 print(sessionInfo())
 [1] rappdirs_0.3.3           R.methodsS3_1.8.2        tidyr_1.3.0             
