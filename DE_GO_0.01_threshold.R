@@ -22,13 +22,13 @@ geneUniverse = as.character(sigGeneOV$EntrezID)
 geneUniverse = geneUniverse[!is.na(geneUniverse)]
 
 ##### ED--CNT 0.01 genes enrichment ####
-id=which(sigGeneCNT$`p_ED-Control`<0.01)
-sigem=as.character(sigGeneCNT$EntrezID[id])
-sigem=sigem[!is.na(sigem)]
-length(sigem)
+idec=which(sigGeneCNT$`p_ED-Control`<0.01)
+sigec=as.character(sigGeneCNT$EntrezID[idec])
+sigec=sigec[!is.na(sigec)]
+length(sigec)
 # [1] 951
 
-goBP=enrichGO(gene          = sigem,
+goBPec=enrichGO(gene          = sigec,
                universe      = geneUniverse,
                OrgDb         = org.Hs.eg.db,
                ont           = "BP",
@@ -36,7 +36,7 @@ goBP=enrichGO(gene          = sigem,
                pvalueCutoff  = 0.1,
                qvalueCutoff  = 0.5,
                readable      = TRUE)
-goMF=enrichGO(gene          = sigem,
+goMFec=enrichGO(gene          = sigec,
               universe      = geneUniverse,
               OrgDb         = org.Hs.eg.db,
               ont           = "MF",
@@ -45,7 +45,7 @@ goMF=enrichGO(gene          = sigem,
               qvalueCutoff  = 0.5,
               readable      = TRUE)
 # no sig
-goCC=enrichGO(gene          = sigem,
+goCCec=enrichGO(gene          = sigec,
               universe      = geneUniverse,
               OrgDb         = org.Hs.eg.db,
               ont           = "CC",
@@ -56,18 +56,142 @@ goCC=enrichGO(gene          = sigem,
 # no sig
 
 # plot
-dbp=dotplot(goBP,showCategory = 20,title="ED-CT only p<0.01 Biological Process GO")
-c1=cnetplot(goBP,foldChange=sigem,circular=TRUE,colorEdge=TRUE)
-goBPt<- pairwise_termsim(goBP)
-emap=emapplot(goBPt)
+ecbp=dotplot(goBPec,showCategory = 20,title="ED-CT only p<0.01 Biological Process GO")
+ecnet=cnetplot(goBPec,foldChange=sigec,circular=TRUE,colorEdge=TRUE)
+goBPec.t<- pairwise_termsim(goBPec)
+ecmap=emapplot(goBPec.t)
 
-pdf('EDvsCT less01 BP_GO.pdf',height=10,width=30)
-cowplot::plot_grid(dbp,c1,emap,ncol=3)
+pdf('EDvsCT less01 BP_GO.pdf',height=14,width=30)
+cowplot::plot_grid(ecbp,ecnet,ecmap,ncol=3)
 dev.off()
 
-write_xlsx(list("BP"=goBP@result,"MF"=goMF@result,"CC"=goCC@result), 
+write_xlsx(list("BP"=goBPec@result,"MF"=goMFec@result,"CC"=goCCec@result), 
 				'./20230803_01_ED-CT.xlsx')
 
+save(goBPec,goMFec,goCCec,ecbp,ecnet,ecmap,goBPec.t,idec,sigec,file='EDvsCT_0.01_BP_enrich.rda')
+
+##### MDD--CNT 0.01 genes enrichment ####
+idmc=which(sigGeneCNT$`p_MDD-Control`<0.01)
+sigmc=as.character(sigGeneCNT$EntrezID[idmc])
+sigmc=sigmc[!is.na(sigmc)]
+length(sigmc)
+# [1] 1626
+
+goBPmc=enrichGO(gene          = sigmc,
+               universe      = geneUniverse,
+               OrgDb         = org.Hs.eg.db,
+               ont           = "BP",
+               pAdjustMethod = "BH",
+               pvalueCutoff  = 0.1,
+               qvalueCutoff  = 0.5,
+               readable      = TRUE)
+goMFmc=enrichGO(gene          = sigmc,
+              universe      = geneUniverse,
+              OrgDb         = org.Hs.eg.db,
+              ont           = "MF",
+              pAdjustMethod = "BH",
+              pvalueCutoff  = 0.1,
+              qvalueCutoff  = 0.5,
+              readable      = TRUE)
+
+goCCmc=enrichGO(gene          = sigmc,
+              universe      = geneUniverse,
+              OrgDb         = org.Hs.eg.db,
+              ont           = "CC",
+              pAdjustMethod = "BH",
+              pvalueCutoff  = 0.1,
+              qvalueCutoff  = 0.5,
+              readable      = TRUE) 
+
+
+# BP plot
+mcdp=dotplot(goBPmc,showCategory = 25,title="MDD-CT only p<0.01 Biological Process GO")
+mcnet=cnetplot(goBPmc,foldChange=sigmc,circular=TRUE,colorEdge=TRUE)
+goBPmc.t<- pairwise_termsim(goBPmc)
+mcmap=emapplot(goBPmc.t)
+
+pdf('MDDvsCT less01 BP_GO.pdf',height=14,width=30)
+cowplot::plot_grid(mcdp,mcnet,mcmap,ncol=3)
+dev.off()
+save(goBPmc,mcdp,mcnet,mcmap,goBPmc.t,idmc,sigmc,file='MDDvsCT_0.01_BP_enrich.rda')
+
+# MF plot
+mcdpmf=dotplot(goMFmc,showCategory = 20,title="MDD-CT only p<0.01 Molecular Functions GO")
+mcnetmf=cnetplot(goMFmc,foldChange=sigmc,circular=TRUE,colorEdge=TRUE)
+goMFmc.t<- pairwise_termsim(goMFmc)
+mcmapmc=emapplot(goMFmc.t)
+
+pdf('MDDvsCT less01 MF_GO.pdf',height=14,width=30)
+cowplot::plot_grid(mcdpmf,mcnetmf,mcmapmc,ncol=3)
+dev.off()
+save(goMFmc,mcdpmf,mcnetmf,mcmapmc,goMFmc.t,idmc,sigmc,file='MDDvsCT_0.01_MF_enrich.rda')
+
+# CC plot
+mcdpcc=dotplot(goCCmc,showCategory = 20,title="MDD-CT only p<0.01 Cellular Components GO")
+mcnetcc=cnetplot(goCCmc,foldChange=sigmc,circular=TRUE,colorEdge=TRUE)
+goCCmc.t<- pairwise_termsim(goCCmc)
+mcmapcc=emapplot(goCCmc.t)
+
+pdf('MDDvsCT less01 CC_GO.pdf',height=14,width=30)
+cowplot::plot_grid(mcdpcc,mcnetcc,mcmapcc,ncol=3)
+dev.off()
+save(goCCmc,mcdpcc,mcnetcc,mcmapcc,goCCmc.t,idmc,sigmc,file='MDDvsCT_0.01_CC_enrich.rda')
+
+write_xlsx(list("BP"=goBPmc@result,"MF"=goMFmc@result,"CC"=goCCmc@result), 
+				'./20230803_01_MDD-CT.xlsx')
+
+
+
+##### ED--MDD 0.01 genes enrichment ####
+idem=which(sigGeneCNT$`p_ED-MDD`<0.01)
+sigem=as.character(sigGeneCNT$EntrezID[idem])
+sigem=sigem[!is.na(sigem)]
+length(sigem)
+# [1] 365
+
+goBPem=enrichGO(gene          = sigem,
+               universe      = geneUniverse,
+               OrgDb         = org.Hs.eg.db,
+               ont           = "BP",
+               pAdjustMethod = "BH",
+               pvalueCutoff  = 0.1,
+               qvalueCutoff  = 0.5,
+               readable      = TRUE)
+goMFem=enrichGO(gene          = sigem,
+              universe      = geneUniverse,
+              OrgDb         = org.Hs.eg.db,
+              ont           = "MF",
+              pAdjustMethod = "BH",
+              pvalueCutoff  = 0.1,
+              qvalueCutoff  = 0.5,
+              readable      = TRUE)
+# no sig
+goCCem=enrichGO(gene          = sigem,
+              universe      = geneUniverse,
+              OrgDb         = org.Hs.eg.db,
+              ont           = "CC",
+              pAdjustMethod = "BH",
+              pvalueCutoff  = 0.1,
+              qvalueCutoff  = 0.5,
+              readable      = TRUE) 
+# no sig
+
+
+# BP plot
+emdp=dotplot(goBPem,showCategory = 26,title="ED-MDD only p<0.01 Biological Process GO")
+emnet=cnetplot(goBPem,foldChange=sigem,circular=TRUE,colorEdge=TRUE)
+goBPem.t<- pairwise_termsim(goBPem)
+emmap=emapplot(goBPem.t)
+
+pdf('EDvsMDD less01 BP_GO.pdf',height=14,width=30)
+cowplot::plot_grid(emdp,emnet,emmap,ncol=3)
+dev.off()
+
+save(goBPem,goMFem,goCCem,emdp,emnet,emmap,goBPem.t,idem,sigem,file='EDvsMDD_0.01_BP_enrich.rda')
+
+
+write_xlsx(list("BP"=goBPem@result,"MF"=goMFem@result,"CC"=goCCem@result), 
+				'./20230803_01_ED--MDD.xlsx')
 
 
 print(sessionInfo())
