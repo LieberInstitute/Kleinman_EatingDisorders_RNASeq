@@ -48,6 +48,7 @@ goCC=enrichGO(gene          = sigem,
 
 # plot
 dbp=dotplot(goBP,showCategory = 20,title="ED-CT only p<0.01 Biological Process GO")
+c1=cnetplot(goBP,foldChange=sigem,circular=TRUE,colorEdge=TRUE)
 
 cowplot::plot_grid(dbp,dmf,dcc,ncol=3)
 
