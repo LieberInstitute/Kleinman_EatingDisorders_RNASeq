@@ -43,7 +43,7 @@ for(k in 1:length(ids)){
 	y_clean_p2 <- cleaningY(t(y), mod2, P = 3)
 	df=data.frame(t(y_clean_p2),Group=rse_gene$Group)
 	dif=mean(y_clean_p2-y)
-	ggplot(data=df,aes(x=Group,fill=Group,y=df[,1]-dif))+
+	p=ggplot(data=df,aes(x=Group,fill=Group,y=df[,1]-dif))+
 	geom_boxplot(outlier.colour = NA, alpha = 0) + geom_point(alpha = 0.7, aes(colour = Group), position = position_jitterdodge()) + 
 	 		labs(x = "Group", y = "Adjusted RPKM",title=paste(sigGeneCNT$Symbol[i],signif(sigGeneCNT$'p_ED-MDD'[i], digits=3),sep='\n')) +
 	 		scale_colour_brewer(palette = "Set1") +
@@ -52,7 +52,9 @@ for(k in 1:length(ids)){
 	 		legend.background = element_rect(colour = "black"),
 	 		legend.title = element_blank(),
 	 		legend.position='none')
-
+	jpeg(file=paste0(sigGeneCNT$Symbol[i],'.jpeg'),height=5,width=5,res=300,unit='in')
+	print(p)
+	dev.off()
 }
 		
 		
