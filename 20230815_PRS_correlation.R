@@ -38,6 +38,8 @@ exp=vGene$E
 prs$Group=rse_gene$Group
 prs$group=sapply(prs$Group,unclass)
 
+
+library(psych)
 data=data.frame(gene=exp[1,],prs1=prs[,1],age=rse_gene$AgeDeath,group=prs$group)
 result=corr.test(x=data,y=NULL,use='pairwise',method='pearson',adjust='holm',alpha=0.5,ci=TRUE)
 # x could be a matrix/dataframe of expression
@@ -59,3 +61,10 @@ dim(prs.res)
 exp=exp[,-c(5,57)]
 COR=corr.test(x=t(exp),y=prs.res,use='pairwise',method='pearson',adjust='holm',alpha=0.5,ci=TRUE)
 # take long time
+
+library(parallel)
+COR.list=mclapply(rownames(exp),function(x) {
+	result=corr.test(x=exp[x,],y=prs.res,use='pairwise',method='pearson',adjust='holm',alpha=0.5,ci=TRUE)
+	return(result)
+},mc.cores=8)
+
