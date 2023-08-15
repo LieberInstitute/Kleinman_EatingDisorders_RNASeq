@@ -29,3 +29,33 @@ save(pr.score,file='n125_prs.rda')
 
 ### load expression data
 load("/home/data1/R/ED/DE/n127_ED_bmi_2qsvsPC_3snpPCs.rda")
+
+## align prs with rse_gene, exclude 2 controls
+which(!rse_gene$BrNum %in% pr.score$BrNum)
+# [1]  5 57
+prs=pr.score[match(rse_gene$BrNum,pr.score$BrNum),]
+exp=vGene$E
+prs$Group=rse_gene$Group
+prs$group=sapply(prs$Group,unclass)
+
+data=data.frame(gene=exp[1,],prs1=prs[,1],age=rse_gene$AgeDeath,group=prs$group)
+result=corr.test(x=data,y=NULL,use='pairwise',method='pearson',adjust='holm',alpha=0.5,ci=TRUE)
+# x could be a matrix/dataframe of expression
+# y could be a matrix/dataframe of prs
+# result[[1]] is the correlation matrix
+# result[[4]] is the unadjusted probability values, result$p
+# result[[5]] is the adjusted probability values, or result$p.adj
+
+
+rownames(prs)=rse_gene$BrNum
+prs.res=sapply(prs[,1:7],function(x){
+  fit=lm(x~rse_gene$AgeDeath+group+mds$snpPC1+mds$snpPC2+mds$snpPC3+mds$snpPC4+mds$snpPC5,data=prs)
+  return(residuals(fit))
+})
+
+dim(prs.res)
+# [1] 125   7
+
+exp=exp[,-c(5,57)]
+COR=corr.test(x=t(exp),y=prs.res,use='pairwise',method='pearson',adjust='holm',alpha=0.5,ci=TRUE)
+# take long time
