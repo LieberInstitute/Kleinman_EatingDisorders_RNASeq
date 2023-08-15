@@ -67,4 +67,51 @@ COR.list=mclapply(rownames(exp),function(x) {
 	result=corr.test(x=exp[x,],y=prs.res,use='pairwise',method='pearson',adjust='holm',alpha=0.5,ci=TRUE)
 	return(result)
 },mc.cores=8)
+COR.3snpPC=sapply(COR.list,function(x){
+ return(x$p)
+ })
+COR.3snpPC=t(COR.3snpPC)
+colnames(COR.3snpPC)=c('0.001','0.05','0.1','0.2','0.3','0.4','0.5')
+rownames(COR.3snpPC)=rownames(exp)
 
+which(COR.3snpPC==min(COR.3snpPC))%%25148
+COR.3snpPC[22693,] # is the mininal exp
+
+save(COR,exp,prs,prs.res,file='/home/data1/R/prs/ed_n127/n125_pearsonCor_result.rda')
+
+x=COR$p
+min(x)
+# [1] 3.113981e-05
+head(x[order(x[,3]),])
+#                        0.001         0.05          0.1          0.2
+# ENSG00000230673.3  0.27920174 7.689147e-04 3.113981e-05 6.315763e-05
+# ENSG00000074582.12 0.04300055 4.193266e-05 5.586354e-05 1.112479e-03
+length(which(x[,3]<0.01))
+# [1] 391
+
+
+############################## 
+## run enrichment analysis ###
+##############################
+####
+library(org.Hs.eg.db)
+library(clusterProfiler)
+geneUniverse = as.character(sigGeneOV$EntrezID)
+geneUniverse = geneUniverse[!is.na(geneUniverse)]
+
+id=which(COR$p[,3]<0.01)
+sig=rowData(rse_gene)[id,]
+sig=unique(as.character(sig$EntrezID[!is.na(sig$EntrezID)]))
+length(sig)
+# [1] 266
+
+moduleGeneList =list(sig=sig)
+goBP <- compareCluster(moduleGeneList, fun = "enrichGO",
+                       universe = geneUniverse, OrgDb = org.Hs.eg.db,
+                       ont = "BP", pAdjustMethod = "BH",
+                       pvalueCutoff  = 1, qvalueCutoff  = 1,
+                       readable= TRUE)
+# no significant term
+
+############# Group Separately ##################
+## eating disorder only  ###
