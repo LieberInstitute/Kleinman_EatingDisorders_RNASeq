@@ -35,7 +35,7 @@ edct = topTable(eBayes(contrasts.fit(fitGene,cmtx)),number=nrow(rse_gene),coef=3
 
 library(ggrepel)
 # plot overall pvalues, got them from coef only equal to 2
-ggplot(data=temp, aes(x=logFC, y=-log10(P.Value),  label=Symbol)) +
+ggplot(data=edmdd, aes(x=logFC, y=-log10(P.Value),  label=Symbol)) +
         geom_point(pch=21) +
         theme_minimal() +
         # geom_text_repel() +
