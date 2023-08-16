@@ -79,7 +79,7 @@ COR.list=mclapply(rownames(exp),function(x) {
 	return(result)
 },mc.cores=8)
 COR=sapply(COR.list,function(x){
- return(x$p)
+ return(x$p.adj)
  })
 COR=t(COR)
 colnames(COR)=c('0.001','0.05','0.1','0.2','0.3','0.4','0.5')
@@ -155,3 +155,54 @@ dotplot(goCC,showCategory = 20,title="Expression PRS correlation p.adj<0.05 Cell
 dev.off()
 
 save(COR,COR.adj,exp,prs,prs.res,goBP,goMF,goCC,file='/home/data1/R/prs/ed_n127/n125_pearsonCor_result.rda')
+
+
+######## ED only ###########
+prs$AgeDeath=rse_gene$AgeDeath
+edexp=vGene$E[,colData(rse_gene)$Group=='ED']
+
+edonlyprs.res=sapply(prs[,1:7],function(x){
+  fit=lm(x~AgeDeath+PC1+PC2+PC3+PC4+PC5,data=prs,subset=(prs$Group=='ED'))
+  return(residuals(fit))
+})
+# CORed=corr.test(x=edexp,y=edonlyprs.res,use='pairwise',method='pearson',adjust='holm',alpha=0.5,ci=TRUE)
+CORed.list=mclapply(rownames(edexp),function(x) {
+	result=corr.test(x=edexp[x,],y=edonlyprs.res,use='pairwise',method='pearson',adjust='holm',alpha=0.5,ci=TRUE)
+	return(result)
+},mc.cores=8)
+CORed=sapply(CORed.list,function(x){
+ return(x$p.adj)
+ })
+CORed=t(CORed)
+colnames(CORed)=c('0.001','0.05','0.1','0.2','0.3','0.4','0.5')
+rownames(CORed)=rownames(edexp)
+# choose the most genes column
+lapply(colnames(CORed),function(x){
+	length(which(CORed[,x]<0.05))
+})
+# 71 177 61 30 22 18 20
+
+######## MDD only ###########
+
+mddexp=vGene$E[,colData(rse_gene)$Group=='MDD']
+
+mddonlyprs.res=sapply(prs[,1:7],function(x){
+  fit=lm(x~AgeDeath+PC1+PC2+PC3+PC4+PC5,data=prs,subset=(prs$Group=='MDD'))
+  return(residuals(fit))
+})
+# CORed=corr.test(x=edexp,y=edonlyprs.res,use='pairwise',method='pearson',adjust='holm',alpha=0.5,ci=TRUE)
+CORmdd.list=mclapply(rownames(mddexp),function(x) {
+	result=corr.test(x=mddexp[x,],y=mddonlyprs.res,use='pairwise',method='pearson',adjust='holm',alpha=0.5,ci=TRUE)
+	return(result)
+},mc.cores=8)
+CORmdd=sapply(CORmdd.list,function(x){
+ return(x$p.adj)
+ })
+CORmdd=t(CORmdd)
+colnames(CORmdd)=c('0.001','0.05','0.1','0.2','0.3','0.4','0.5')
+rownames(CORmdd)=rownames(mddexp)
+# choose the most genes column
+lapply(colnames(CORmdd),function(x){
+	length(which(CORmdd[,x]<0.05))
+})
+# 41 222 164 160 152 152 150
