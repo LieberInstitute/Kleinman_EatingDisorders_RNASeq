@@ -107,7 +107,7 @@ library(clusterProfiler)
 geneUniverse = as.character(sigGeneOV$EntrezID)
 geneUniverse = geneUniverse[!is.na(geneUniverse)]
 
-id=which(COR.adj[,2]<0.05)
+id=which(COR[,2]<0.05)
 sig=rowData(rse_gene)[id,]
 sig=unique(as.character(sig$EntrezID[!is.na(sig$EntrezID)]))
 length(sig)
