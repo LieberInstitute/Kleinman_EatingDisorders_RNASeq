@@ -58,5 +58,65 @@ Residual standard error: 3.812 on 118 degrees of freedom
 Multiple R-squared:  0.9347,	Adjusted R-squared:  0.9302 
 F-statistic:   211 on 8 and 118 DF,  p-value: < 2.2e-16
 
+
+#load BMI information
+bmi=read.csv('ED_BMI.csv')
+bmi=bmi[match(colData(rse_gene)$BrNum,bmi$BrNum),]
+identical(paste(bmi$BrNum),colData(rse_gene)$BrNum)
+# [1] TRUE
+colnames(bmi)[2:5]=c('AgeOnsetMdd','height','BMI','weight')
+colData(rse_gene)=cbind(colData(rse_gene),bmi[,2:5])
+
+######################
+
 library(limma)
 library(edgeR)
+#########  add snpPCs #########
+load("/home/data1/R/ED/snpPCs/n127_ED_MDS_indep-pairwise_200_100_0.2.rda.rda")
+identical(rownames(mds),rse_gene$BrNum)
+# [1] TRUE
+colData(rse_gene)=cbind(colData(rse_gene),mds)
+
+#Get rid of confounders
+deleteVars <- c('mitoRate','rRNA_rate','totalAssignedGene','RIN')
+
+
+modQsva = model.matrix(~0 + Group + AgeDeath + overallMapRate +BMI+ qSVs[,1:2] + snpPC1+snpPC2+snpPC3, 
+		data = colData(rse_gene))
+colnames(modQsva)[1:3] = levels(rse_gene$Group)
+# modQsva = model.matrix(~0 + Group + AgeDeath + overallMapRate + BMI + qSVs[,1:3], data = colData(rse_gene))
+colnames(modQsva)[7:8]=c('PC1','PC2')
+
+cmtx <- makeContrasts( "MDD-Control", "ED-MDD","ED-Control", levels= modQsva)
+##### GENE ######
+dge = DGEList(counts = assays(rse_gene)$counts,
+	genes = rowData(rse_gene))
+dge = calcNormFactors(dge)
+vGene = voom(dge,modQsva, plot=FALSE)
+fitGene = lmFit(vGene)
+ebGene = eBayes(contrasts.fit(fitGene,cmtx))
+
+sigGeneOV = topTable(eBayes(contrasts.fit(fitGene,cmtx)), coef=1:2,		# for overall (F")
+	p.value = 1, number=nrow(rse_gene))
+	
+sigGeneCNT = topTable(eBayes(contrasts.fit(fitGene,cmtx)), coef=1:3,		# for mdd->ED and cnt->ed ("ED.Control")
+	p.value = 1, number=nrow(rse_gene))
+
+## significance levels
+pvalMat = as.matrix(ebGene$p.value)
+qvalMat = pvalMat
+qvalMat[,1:3] = p.adjust(pvalMat[,1:3],method="fdr") 
+colnames(pvalMat) = paste0("p_",colnames(pvalMat))
+colnames(qvalMat) = paste0("q_",colnames(qvalMat))
+
+# sigGeneCNT = cbind(sigGeneCNT,pvalMat,qvalMat)  
+# rownames are not identical
+
+sigGeneCNT=cbind(sigGeneCNT,pvalMat[rownames(sigGeneCNT),],qvalMat[rownames(sigGeneCNT),])
+
+sigGeneCNT = sigGeneCNT[,-c(10,11)]
+
+sigGeneOV = sigGeneOV[,-c(10,11)]
+
+# for check results briefly
+sigGeneCNT$Symbol[which(sigGeneCNT$'q_ED-MDD'<0.05)]
