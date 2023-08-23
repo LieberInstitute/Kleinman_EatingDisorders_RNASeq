@@ -56,13 +56,43 @@ p1=EnhancedVolcano(mddct,lab = mddct$Symbol,
   x = 'logFC',y = 'P.Value',title = 'MDD vs Control',pCutoff=1e-4)
 
 p2=EnhancedVolcano(edmdd,lab = edmdd$Symbol,
-  selectLab = c('AC027612.1','FXYD3','LMOD1','TRAF1','BEST1','TRNT1','RP1-95L4.4','ALDH1L1','STX11','SLCO4A1','RNF144B','SMIM3','SNORD115-14','NEDD9','SRGN','RP11-338N10.3','AC027612.1','FXYD3','LMOD1','TRAF1','BEST1','TRNT1','RP1-95L4.4','ALDH1L1','STX11','SLCO4A1','RNF144B','SMIM3','SNORD115-14','NEDD9','SRGN','RP11-338N10.3'),
-  x = 'logFC',y = 'P.Value',title = 'ED vs MDD',pCutoff=1e-4)
-
+                   selectLab = c('MAFF','SERPINE1','LMOD1'),
+                   x = 'logFC',y = 'P.Value',title = 'ED vs MDD',pCutoff=1e-4, 
+                   labSize=3.5,legendPosition = 'bottom',
+    legendLabSize = 10,
+    legendIconSize = 4.0)
 p3=EnhancedVolcano(edct,lab = edct$Symbol,x = 'logFC',y = 'P.Value',title = 'ED vs Control',pCutoff=1e-4)
 
 
 library(gridExtra)
 jpeg(file='volcano.jpeg',res=300,width=12,height=8,unit='in')
 grid.arrange(p1,p2,p3,ncol=3)
+dev.off()
+
+#### 20230822 #### /home/data1/R/ED/DE/plots
+png(file='ED-MDD volcano.png',height=10,width=6,res=300,unit="in")
+EnhancedVolcano(edmdd,lab = edmdd$Symbol,
+                selectLab = c('MAFF','SERPINE1','LMOD1'),
+                x = 'logFC',y = 'P.Value',title = 'ED vs MDD',pCutoff=1e-4, 
+                labSize=3.5,legendPosition = 'bottom',
+                legendLabSize = 10,
+                legendIconSize = 4.0)
+dev.off()
+
+png(file='MDD Control volcano.png',height=10,width=6,res=300,unit="in")
+EnhancedVolcano(mddct,lab = mddct$Symbol,
+              #  selectLab = c('MAFF','SERPINE1','LMOD1'),
+                x = 'logFC',y = 'P.Value',title = 'MDD vs Control',pCutoff=1e-4, 
+                labSize=3.5,legendPosition = 'bottom',
+                legendLabSize = 10,
+                legendIconSize = 4.0)
+dev.off()
+
+png(file='ED Control volcano.png',height=10,width=6,res=300,unit="in")
+EnhancedVolcano(edct,lab = edct$Symbol,
+              selectLab = c('DIO2','SERPINE1','HEMK1','SERPINA3','FAM110C'),
+                x = 'logFC',y = 'P.Value',title = 'ED vs Control',pCutoff=1e-4, 
+                labSize=3.5,legendPosition = 'bottom',
+                legendLabSize = 10,
+                legendIconSize = 4.0)
 dev.off()
