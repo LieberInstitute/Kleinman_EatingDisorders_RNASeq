@@ -98,6 +98,18 @@ lapply(colnames(COR.adj),function(x){
 save(COR,COR.adj,exp,prs,prs.res,file='/home/data1/R/prs/ed_n127/n125_pearsonCor_result.rda')
 
 
+############
+# check the correlation dirrection
+COR.r=sapply(COR.list,function(x){
+ return(x$r)
+ })
+COR.r=t(COR.r)
+colnames(COR.r)=c('0.001','0.05','0.1','0.2','0.3','0.4','0.5')
+rownames(COR.r)=rownames(exp)	
+
+
+
+	       
 ############################## 
 ## run enrichment analysis ###
 ##############################
@@ -107,11 +119,11 @@ library(clusterProfiler)
 geneUniverse = as.character(sigGeneOV$EntrezID)
 geneUniverse = geneUniverse[!is.na(geneUniverse)]
 
-id=which(COR[,2]<0.05)
+id=which(COR[,2]<0.05 & COR.r[,2]<0) # select negative correlation genes
 sig=rowData(rse_gene)[id,]
 sig=unique(as.character(sig$EntrezID[!is.na(sig$EntrezID)]))
 length(sig)
-# [1] 506
+# [1] 84  ## positive correlation 422 genes
 
 goBP=enrichGO(gene          = sig,
                universe      = geneUniverse,
@@ -137,9 +149,11 @@ goCC=enrichGO(gene          = sig,
               pAdjustMethod = "BH",
               pvalueCutoff  = 0.1,
               qvalueCutoff  = 0.5,
-              readable      = TRUE) 
-write_xlsx(list("BP"=goBP@result,"MF"=goMF@result,"CC"=goCC@result), 
-				'./20230816_p.adjless0.05_PRS_GO.xlsx')
+              readable      = TRUE)
+genes=data.frame(cbind(rowData(rse_gene)[id,"Symbol"],COR[id,2],COR.r[id,2]))
+colnames(genes)=c('Symbol','p.adj','r')
+write_xlsx(list("gene"=genes,"BP"=goBP@result,"MF"=goMF@result,"CC"=goCC@result), 
+				'./20230824_p.adjless0.05_negCor_PRS_GO.xlsx')
 
 
 pdf('PRS exp correlation BP_GO.pdf',height=10,width=8)
