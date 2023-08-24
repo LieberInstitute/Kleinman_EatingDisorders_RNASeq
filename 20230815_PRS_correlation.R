@@ -123,7 +123,7 @@ id=which(COR[,2]<0.05 & COR.r[,2]<0) # select negative correlation genes
 sig=rowData(rse_gene)[id,]
 sig=unique(as.character(sig$EntrezID[!is.na(sig$EntrezID)]))
 length(sig)
-# [1] 84  ## positive correlation 422 genes
+# [1] 506 for total, 84 for negative and positive correlation 422 genes
 
 goBP=enrichGO(gene          = sig,
                universe      = geneUniverse,
