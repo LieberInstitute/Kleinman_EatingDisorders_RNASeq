@@ -125,6 +125,18 @@ sig=unique(as.character(sig$EntrezID[!is.na(sig$EntrezID)]))
 length(sig)
 # [1] 506 for total, 84 for negative and positive correlation 422 genes
 
+###### top 3 correlated genes
+COR.p=sapply(COR.list,function(x){
+ return(x$p)
+ })
+COR.p=t(COR.p)
+colnames(COR.p)=c('0.001','0.05','0.1','0.2','0.3','0.4','0.5')
+rownames(COR.p)=rownames(exp)
+top.cor=data.frame(ensg=rownames(exp),Symbol=rowData(rse_gene)$Symbol,EntrezID=rowData(rse_gene)$EntrezID,cor.r=COR.r[,2],cor.p=COR.p[,2],cor.p.adj=COR[,2])
+top.cor=top.cor[order(top.cor$cor.p),]
+write_xlsx(list("PRS_exp_COR"=top.cor),'PRS_exp_COR_prange0.05.xlsx')
+	       
+	       
 goBP=enrichGO(gene          = sig,
                universe      = geneUniverse,
                OrgDb         = org.Hs.eg.db,
