@@ -180,7 +180,7 @@ pdf('PRS exp correlation CC_GO.pdf',height=10,width=8)
 dotplot(goCC,showCategory = 20,title="Expression PRS correlation p.adj<0.05 Cellular Components GO")
 dev.off()
 
-save(COR,COR.adj,exp,prs,prs.res,goBP,goMF,goCC,file='/home/data1/R/prs/ed_n127/n125_pearsonCor_result.rda')
+save(COR,COR.p,COR.r,exp,prs,prs.res,goBP,goMF,goCC,file='/home/data1/R/prs/ed_n127/n125_pearsonCor_result.rda')
 
 
 ######## ED only ###########
