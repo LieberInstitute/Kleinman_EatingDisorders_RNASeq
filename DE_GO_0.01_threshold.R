@@ -1,5 +1,5 @@
 # AMD server 
-load("DE/ED_contrast_gene_n122.Rdata")
+load("DE/n127_ED_bmi_2qsvsPC_3snpPCs.rda")
 library(org.Hs.eg.db)
 library(clusterProfiler)
 library(cowplot)
@@ -26,7 +26,7 @@ idec=which(sigGeneCNT$`p_ED-Control`<0.01)
 sigec=as.character(sigGeneCNT$EntrezID[idec])
 sigec=sigec[!is.na(sigec)]
 length(sigec)
-# [1] 951
+# [1] 797
 
 goBPec=enrichGO(gene          = sigec,
                universe      = geneUniverse,
@@ -66,7 +66,7 @@ cowplot::plot_grid(ecbp,ecnet,ecmap,ncol=3)
 dev.off()
 
 write_xlsx(list("BP"=goBPec@result,"MF"=goMFec@result,"CC"=goCCec@result), 
-				'./20230803_01_ED-CT.xlsx')
+				'./20230825_01_ED-CT.xlsx')
 
 save(goBPec,goMFec,goCCec,ecbp,ecnet,ecmap,goBPec.t,idec,sigec,file='EDvsCT_0.01_BP_enrich.rda')
 
@@ -75,7 +75,7 @@ idmc=which(sigGeneCNT$`p_MDD-Control`<0.01)
 sigmc=as.character(sigGeneCNT$EntrezID[idmc])
 sigmc=sigmc[!is.na(sigmc)]
 length(sigmc)
-# [1] 1626
+# [1] 1730
 
 goBPmc=enrichGO(gene          = sigmc,
                universe      = geneUniverse,
@@ -138,7 +138,7 @@ dev.off()
 save(goCCmc,mcdpcc,mcnetcc,mcmapcc,goCCmc.t,idmc,sigmc,file='MDDvsCT_0.01_CC_enrich.rda')
 
 write_xlsx(list("BP"=goBPmc@result,"MF"=goMFmc@result,"CC"=goCCmc@result), 
-				'./20230803_01_MDD-CT.xlsx')
+				'./20230825_01_MDD-CT.xlsx')
 
 
 
@@ -147,7 +147,7 @@ idem=which(sigGeneCNT$`p_ED-MDD`<0.01)
 sigem=as.character(sigGeneCNT$EntrezID[idem])
 sigem=sigem[!is.na(sigem)]
 length(sigem)
-# [1] 365
+# [1] 369
 
 goBPem=enrichGO(gene          = sigem,
                universe      = geneUniverse,
@@ -191,7 +191,7 @@ save(goBPem,goMFem,goCCem,emdp,emnet,emmap,goBPem.t,idem,sigem,file='EDvsMDD_0.0
 
 
 write_xlsx(list("BP"=goBPem@result,"MF"=goMFem@result,"CC"=goCCem@result), 
-				'./20230803_01_ED--MDD.xlsx')
+				'./20230825_01_ED--MDD.xlsx')
 
 
 print(sessionInfo())
