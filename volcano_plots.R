@@ -32,8 +32,8 @@ edmdd = topTable(eBayes(contrasts.fit(fitGene,cmtx)),number=nrow(rse_gene),coef=
 # coef=3 is topTable for ED-Control
 edct = topTable(eBayes(contrasts.fit(fitGene,cmtx)),number=nrow(rse_gene),coef=3)
 
-write.xlsx(list("ed_mdd"=edmdd,"ed_ct"=edct,"mdd_ct"=mddct),
-          file='n127_ED_cmtx_LFC.xlsx')
+write_xlsx(list("ed_mdd"=edmdd,"ed_ct"=edct,"mdd_ct"=mddct),
+          'n127_ED_cmtx_LFC.xlsx')
 
 library(ggrepel)
 # plot overall pvalues, got them from coef only equal to 2
