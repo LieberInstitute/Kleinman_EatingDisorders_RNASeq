@@ -93,3 +93,14 @@ cowplot::plot_grid(d4,c4,t4,bt4,ncol=2)
 dev.off()
 
 
+####### TREE plot #######
+    library(clusterProfiler)
+    library(org.Hs.eg.db)
+    library(enrichplot)
+    library(GOSemSim)
+    library(DOSE)
+d <- godata('org.Hs.eg.db', ont="BP")
+load("~/Downloads/EDvsMDD_0.01_BP_enrich.rda")
+egot<-pairwise_termsim(goBPem,method="Wang",semData=d)
+treeplot(egot)
+# https://rdrr.io/github/GuangchuangYu/enrichplot/man/treeplot.html
