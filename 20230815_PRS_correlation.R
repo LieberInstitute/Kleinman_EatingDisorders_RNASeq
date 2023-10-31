@@ -150,11 +150,11 @@ top.cor=data.frame(ensg=rownames(exp),Symbol=rowData(rse_gene)$Symbol,EntrezID=r
 top.cor=top.cor[order(top.cor$cor.p.adj),]
 write_xlsx(list("PRS_exp_COR"=top.cor),'/home/data1/R/ED/DE/20231012-results/PRS_exp_COR_prange0.05.xlsx')
 
-id=which(COR.padj[,2]<0.05) # select negative correlation genes
+id=which(COR.p[,2]<0.01) # select negative correlation genes
 sig=rowData(rse_gene)[id,]
 sig=unique(as.character(sig$EntrezID[!is.na(sig$EntrezID)]))
 length(sig)
-# 183 , # Dx changed 3 people 20231031
+# 240 , # Dx changed 3 people 20231031
 	       
 goBP=enrichGO(gene          = sig,
                universe      = geneUniverse,
@@ -181,8 +181,8 @@ goCC=enrichGO(gene          = sig,
               pvalueCutoff  = 0.1,
               qvalueCutoff  = 0.5,
               readable      = TRUE)
-genes=data.frame(cbind(rowData(rse_gene)[id,"Symbol"],COR.padj[id,2],COR.r[id,2]))
-colnames(genes)=c('Symbol','p.adj','r')
+genes=data.frame(cbind(rowData(rse_gene)[id,"Symbol"],COR.p[id,2],COR.padj[id,2],COR.r[id,2]))
+colnames(genes)=c('Symbol','p','p.adj','r')
 write_xlsx(list("gene"=genes,"BP"=goBP@result,"MF"=goMF@result,"CC"=goCC@result), 
 				'/home/data1/R/ED/DE/20231012-results/20231031_COR.p.adjless0.05_PRS_GO.xlsx')
 
