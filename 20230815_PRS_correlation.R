@@ -137,7 +137,7 @@ library(clusterProfiler)
 geneUniverse = as.character(sigGeneOV$EntrezID)
 geneUniverse = geneUniverse[!is.na(geneUniverse)]
 
-id=which(COR.padj[,2]<0.05 & COR.r[,2]<0) # select negative correlation genes
+id=which(COR.p[,2]<0.01)  # 20231031
 sig=rowData(rse_gene)[id,]
 sig=unique(as.character(sig$EntrezID[!is.na(sig$EntrezID)]))
 length(sig)
