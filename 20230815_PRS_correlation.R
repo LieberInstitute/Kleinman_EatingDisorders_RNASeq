@@ -137,23 +137,24 @@ library(clusterProfiler)
 geneUniverse = as.character(sigGeneOV$EntrezID)
 geneUniverse = geneUniverse[!is.na(geneUniverse)]
 
-id=which(COR[,2]<0.05 & COR.r[,2]<0) # select negative correlation genes
+id=which(COR.padj[,2]<0.05 & COR.r[,2]<0) # select negative correlation genes
 sig=rowData(rse_gene)[id,]
 sig=unique(as.character(sig$EntrezID[!is.na(sig$EntrezID)]))
 length(sig)
 # [1] 506 for total, 84 for negative and positive correlation 422 genes
+# 31 for negative, 152 for positive correlations , 183 in total  # Dx changed 3 people 20231031
 
-###### top 3 correlated genes
-COR.p=sapply(COR.list,function(x){
- return(x$p)
- })
-COR.p=t(COR.p)
-colnames(COR.p)=c('0.001','0.05','0.1','0.2','0.3','0.4','0.5')
-rownames(COR.p)=rownames(exp)
-top.cor=data.frame(ensg=rownames(exp),Symbol=rowData(rse_gene)$Symbol,EntrezID=rowData(rse_gene)$EntrezID,cor.r=COR.r[,2],cor.p=COR.p[,2],cor.p.adj=COR[,2])
-top.cor=top.cor[order(top.cor$cor.p),]
-write_xlsx(list("PRS_exp_COR"=top.cor),'PRS_exp_COR_prange0.05.xlsx')
-	       
+###### top 3 correlated genes for prange <0.05 from AN paper
+top.cor=data.frame(ensg=rownames(exp),Symbol=rowData(rse_gene)$Symbol,EntrezID=rowData(rse_gene)$EntrezID,
+		   cor.r=COR.r[,2],cor.p=COR.p[,2],cor.p.adj=COR.padj[,2])
+top.cor=top.cor[order(top.cor$cor.p.adj),]
+write_xlsx(list("PRS_exp_COR"=top.cor),'/home/data1/R/ED/DE/20231012-results/PRS_exp_COR_prange0.05.xlsx')
+
+id=which(COR.padj[,2]<0.05) # select negative correlation genes
+sig=rowData(rse_gene)[id,]
+sig=unique(as.character(sig$EntrezID[!is.na(sig$EntrezID)]))
+length(sig)
+# 183 , # Dx changed 3 people 20231031
 	       
 goBP=enrichGO(gene          = sig,
                universe      = geneUniverse,
@@ -180,10 +181,10 @@ goCC=enrichGO(gene          = sig,
               pvalueCutoff  = 0.1,
               qvalueCutoff  = 0.5,
               readable      = TRUE)
-genes=data.frame(cbind(rowData(rse_gene)[id,"Symbol"],COR[id,2],COR.r[id,2]))
+genes=data.frame(cbind(rowData(rse_gene)[id,"Symbol"],COR.padj[id,2],COR.r[id,2]))
 colnames(genes)=c('Symbol','p.adj','r')
 write_xlsx(list("gene"=genes,"BP"=goBP@result,"MF"=goMF@result,"CC"=goCC@result), 
-				'./20230824_p.adjless0.05_negCor_PRS_GO.xlsx')
+				'/home/data1/R/ED/DE/20231012-results/20231031_COR.p.adjless0.05_PRS_GO.xlsx')
 
 
 pdf('PRS exp correlation BP_GO.pdf',height=10,width=8)
