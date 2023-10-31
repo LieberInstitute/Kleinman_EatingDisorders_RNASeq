@@ -38,15 +38,19 @@ save(pr.score,file='n125_prs.rda')
 
 
 ### load expression data
-load("/home/data1/R/ED/DE/n127_ED_bmi_2qsvsPC_3snpPCs.rda")
+#load("/home/data1/R/ED/DE/n127_ED_bmi_2qsvsPC_3snpPCs.rda")
+load("/home/data1/R/ED/expr_cutoff/rse_gene_modified.Rdata") # Dx changed 3 people 20231031
+load("n127_ED_bmi_2qsvs_3snpPCs.rda")
 
 ## align prs with rse_gene, exclude 2 controls
 which(!rse_gene$BrNum %in% pr.score$BrNum)
 # [1]  5 57
 prs=pr.score[match(rse_gene$BrNum,pr.score$BrNum),]
 exp=vGene$E
-prs$Group=rse_gene$Group
-prs$group=sapply(prs$Group,unclass)
+#prs$Group=rse_gene$Group
+#prs$group=sapply(prs$Group,unclass)
+prs$Group=rse_gene$Dx  # Dx changed 3 people 20231031
+prs$group=as.numeric(factor(prs$Group))
 
 
 library(psych)
@@ -78,24 +82,38 @@ COR.list=mclapply(rownames(exp),function(x) {
 	result=corr.test(x=exp[x,],y=prs.res,use='pairwise',method='pearson',adjust='holm',alpha=0.5,ci=TRUE)
 	return(result)
 },mc.cores=8)
-COR=sapply(COR.list,function(x){
- return(x$p.adj)
+
+## correlation p values original	       
+COR.p=sapply(COR.list,function(x){
+ return(x$p)
  })
-COR=t(COR)
-colnames(COR)=c('0.001','0.05','0.1','0.2','0.3','0.4','0.5')
-rownames(COR)=rownames(exp)
+COR.p=t(COR.p)
+colnames(COR.p)=c('0.001','0.05','0.1','0.2','0.3','0.4','0.5')
+rownames(COR.p)=rownames(exp)
 
 ## choose the p range/cutoff of PRS has most correlation with expression
-lapply(colnames(COR),function(x){
-	length(which(COR[,x]<0.05))
+lapply(colnames(COR.p),function(x){
+	length(which(COR.p[,x]<0.05))
 })
 # [[1]] 844 [[2]] 3552 [[3]] 3617 [[4]] 1608 [[5]] 658 [[6]] 626 [[7]] 573
-lapply(colnames(COR.adj),function(x){
-	length(which(COR.adj[,x]<0.05))
+# 535, 2105, 1782, 857, 452, 406, 392  # Dx changed 3 people 20231031
+
+## correlation p values adjusted	       
+COR.padj=sapply(COR.list,function(x){
+ return(x$p.adj)
+ })
+COR.padj=t(COR.padj)
+colnames(COR.padj)=c('0.001','0.05','0.1','0.2','0.3','0.4','0.5')
+rownames(COR.padj)=rownames(exp)
+lapply(colnames(COR.padj),function(x){
+	length(which(COR.padj[,x]<0.05))
 })
 # 85 652 556 180 93 88 87
+# 51, 257, 198, 100, 68, 63, 62    # Dx changed 3 people 20231031
+	       
 ## choose COR.adj
-save(COR,COR.adj,exp,prs,prs.res,file='/home/data1/R/prs/ed_n127/n125_pearsonCor_result.rda')
+#save(COR,COR.adj,exp,prs,prs.res,file='/home/data1/R/prs/ed_n127/n125_pearsonCor_result.rda')
+save(COR.list,COR.p,COR.padj,exp,prs,prs.res,file='/home/data1/R/prs/ed_n127/n125_pearsonCor_result_20231031.rda')
 
 
 ############
