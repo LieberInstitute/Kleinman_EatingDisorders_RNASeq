@@ -66,7 +66,7 @@ result=corr.test(x=data,y=NULL,use='pairwise',method='pearson',adjust='holm',alp
 
 rownames(prs)=rse_gene$BrNum
 prs.res=sapply(prs[,1:7],function(x){
-  fit=lm(x~rse_gene$AgeDeath+group+PC1+PC2+PC3+PC4+PC5,data=prs)
+  fit=lm(x~rse_gene$AgeDeath+group+PC1+PC2+PC3,data=prs)
   return(residuals(fit))
 })
 
@@ -96,7 +96,7 @@ lapply(colnames(COR.p),function(x){
 	length(which(COR.p[,x]<0.05))
 })
 # [[1]] 844 [[2]] 3552 [[3]] 3617 [[4]] 1608 [[5]] 658 [[6]] 626 [[7]] 573
-# 535, 2105, 1782, 857, 452, 406, 392  # Dx changed 3 people 20231031
+# 514, 2192, 1746, 86, 460, 413, 401  # Dx changed 3 people 20231031
 
 ## correlation p values adjusted	       
 COR.padj=sapply(COR.list,function(x){
@@ -109,7 +109,7 @@ lapply(colnames(COR.padj),function(x){
 	length(which(COR.padj[,x]<0.05))
 })
 # 85 652 556 180 93 88 87
-# 51, 257, 198, 100, 68, 63, 62    # Dx changed 3 people 20231031
+# 51, 271, 206, 103,71, 64, 65    # Dx changed 3 people 20231031
 	       
 ## choose COR.adj
 #save(COR,COR.adj,exp,prs,prs.res,file='/home/data1/R/prs/ed_n127/n125_pearsonCor_result.rda')
@@ -142,7 +142,7 @@ sig=rowData(rse_gene)[id,]
 sig=unique(as.character(sig$EntrezID[!is.na(sig$EntrezID)]))
 length(sig)
 # [1] 506 for total, 84 for negative and positive correlation 422 genes
-# 31 for negative, 152 for positive correlations , 183 in total  # Dx changed 3 people 20231031
+# 272 in total  # Dx changed 3 people 20231031
 
 ###### top 3 correlated genes for prange <0.05 from AN paper
 top.cor=data.frame(ensg=rownames(exp),Symbol=rowData(rse_gene)$Symbol,EntrezID=rowData(rse_gene)$EntrezID,
@@ -154,7 +154,7 @@ id=which(COR.p[,2]<0.01) # select negative correlation genes
 sig=rowData(rse_gene)[id,]
 sig=unique(as.character(sig$EntrezID[!is.na(sig$EntrezID)]))
 length(sig)
-# 240 , # Dx changed 3 people 20231031
+# 272 , # Dx changed 3 people 20231031
 	       
 goBP=enrichGO(gene          = sig,
                universe      = geneUniverse,
