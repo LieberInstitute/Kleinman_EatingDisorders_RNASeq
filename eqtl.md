@@ -114,3 +114,11 @@ n127=t(n127[,1:243])
 save(queryid,pos,n127,file="/home/data1/R/ED/DE/20231012-results/AN_GWAS_1e-8_n127_genotypes.rda")
 ```
 
+### Statistic Model
+```r
+pd$Dx=factor(pd$Dx,levels=c('Control','ED','MDD'))
+summary(pd$Dx)
+# Control      ED     MDD 
+#     42      41      44
+mod = model.matrix(~Dx + AgeDeath + snpPC1 + snpPC2 + snpPC3,	data = pd)
+```
