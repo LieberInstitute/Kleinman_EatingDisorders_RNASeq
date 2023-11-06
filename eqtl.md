@@ -177,5 +177,17 @@ meGene = Matrix_eQTL_main(snps=theSnps, gene = geneSlice,
 geneEqtl = meGene$cis$eqtls
 geneEqtl$gene = as.character(geneEqtl$gene)
 geneEqtl$snps = as.character(geneEqtl$snps)
-# no sig SNP was found
+# no cis sig SNP was found
+
+## trans SNPs eqtl
+length(which(meGene$trans$eqtls$FDR<0.05))
+# [1] 173
+
+transeqtl=meGene$trans$eqtls[meGene$trans$eqtls$FDR<0.05,]
+
+# annotate
+transeqtl$Symbol=rowData(rse_gene)$Symbol[match(transeqtl$gene,rowData(rse_gene)$gencodeID)]
+table(transeqtl$Symbol)
+# WDR6 
+# 173 
 ```
