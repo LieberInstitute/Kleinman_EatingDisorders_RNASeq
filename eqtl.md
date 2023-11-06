@@ -29,5 +29,24 @@ rm(dat)
 ```
 2. query genotypes for those SNPs
 ```r
+library(SNPlocs.Hsapiens.dbSNP149.GRCh38) # tried 155 version
+snps <- SNPlocs.Hsapiens.dbSNP149.GRCh38
 
+# two SNPs don't have rs#
+which(pos$ID=='.')
+#[1]  81 167, mannually update the rs# for those two SNPs
+pos$ID[81]='rs3923475'
+pos$ID[167]='rs4858799'
+# query SNPs hg38 version position
+pos.hg38= snpsById(snps,pos$ID,ifnotfound="drop")
+
+summary(pos$ID %in% pos.hg38.155$RefSNP_id)
+#   Mode   FALSE    TRUE 
+# logical      32     253 
+summary(pos$ID %in% pos.hg38$RefSNP_id)
+#   Mode   FALSE    TRUE 
+#logical      32     253
+
+## update hg38 verison position
+pos$hg38=data.frame(pos.hg38)$pos[match(pos$ID,pos.hg38$RefSNP_id)]
 ```
