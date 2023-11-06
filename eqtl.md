@@ -122,3 +122,60 @@ summary(pd$Dx)
 #     42      41      44
 mod = model.matrix(~Dx + AgeDeath + snpPC1 + snpPC2 + snpPC3,	data = pd)
 ```
+
+### create SNP objects
+```r
+library(MatrixEQTL)
+theSnps = SlicedData$new(as.matrix(n127))
+theSnps$ResliceCombined(sliceSize = 50000)
+
+snpspos = queryid[,c("ID","CHROM","hg38")][1:243,]
+colnames(snpspos) = c("name","chr","pos")
+```
+
+### do PCA
+```r
+library(sva)
+library(recount)
+geneRpkm = recount::getRPKM(rse_gene, length="Length")
+pcaGene = prcomp(t(log2(geneRpkm+1)))
+kGene = num.sv(log2(geneRpkm+1), mod) # kGene is 11
+genePCs = pcaGene$x[,1:kGene]
+pcaVars = getPcaVars(pcaGene)
+getPcaVars(pcaGene)[1:5]
+# [1] 25.90 15.60  6.12  4.56  3.35
+
+covsGene = SlicedData$new(t(cbind(mod[,-1],genePCs)))
+```
+
+### feature annotation
+```r
+posGene = as.data.frame(rowRanges(rse_gene))[,1:3]
+posGene$name = rownames(posGene)
+posGene = posGene[,c(4,1:3)]
+```
+
+### sliced expression data
+```r
+geneSlice = SlicedData$new(log2(geneRpkm+1))
+geneSlice$ResliceCombined(sliceSize = 5000)
+
+```
+
+### Run EQTLs
+```r
+print("Starting eQTLs")
+
+meGene = Matrix_eQTL_main(snps=theSnps, gene = geneSlice, 
+	cvrt = covsGene, output_file_name.cis =  ".ctxt" ,
+	pvOutputThreshold.cis = 1,  pvOutputThreshold=0,
+	snpspos = snpspos, genepos = posGene, 
+	useModel = modelLINEAR,	cisDist=5e5,
+	pvalue.hist = 100,min.pv.by.genesnp = TRUE)
+
+# extract
+geneEqtl = meGene$cis$eqtls
+geneEqtl$gene = as.character(geneEqtl$gene)
+geneEqtl$snps = as.character(geneEqtl$snps)
+# no sig SNP was found
+```
