@@ -232,3 +232,18 @@ colnames(MDD.counts)=c("SNP","genotype","N")
 
 write_xlsx(list("CT"=CT.counts,"ED"=ED.counts,"MDD"=MDD.counts),"./genotypes_count.xlsx")
 ```
+
+### calculate MAF minor allele frequency
+```r
+library(dplyr)
+CT.maf=CT.counts %>% group_by(SNP) %>%
+	summarise(MAF=(2*N[genotype==0]+N[genotype==1])/sum(N)/2)
+
+ED.maf=ED.counts %>% group_by(SNP) %>%
+	summarise(MAF=(2*N[genotype==0]+N[genotype==1])/sum(N)/2)
+
+MDD.maf=MDD.counts %>% group_by(SNP) %>%
+	summarise(MAF=(2*N[genotype==0]+N[genotype==1])/sum(N)/2)
+
+write_xlsx(list("CT"=CT.maf,"ED"=ED.maf,"MDD"=MDD.maf),"./genotypes_MAF.xlsx")
+```
