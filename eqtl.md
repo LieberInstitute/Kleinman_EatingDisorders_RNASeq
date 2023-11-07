@@ -191,3 +191,33 @@ table(transeqtl$Symbol)
 # WDR6 
 # 173 
 ```
+
+### check genotypes frequency
+```r
+library(reshape2)
+df=data.frame(t(n127))
+
+# control group
+dfct=df[rse_gene$Dx=='Control',]
+genocountsCT=lapply(colnames(dfct),function(x){
+reshape2::melt(table(dfct[,x]))
+})
+names(genocountsCT)=colnames(dfct)
+CT.counts=do.call("rbind",genocountsCT)
+
+# ED group
+dfed=df[rse_gene$Dx=='ED',]
+genocountsED=lapply(colnames(dfed),function(x){
+reshape2::melt(table(dfed[,x]))
+})
+names(genocountsED)=colnames(dfed)
+ED.counts=do.call("rbind",genocountsED)
+
+# MDD group
+dfmdd=df[rse_gene$Dx=='MDD',]
+genocountsMDD=lapply(colnames(dfmdd),function(x){
+reshape2::melt(table(dfmdd[,x]))
+})
+names(genocountsMDD)=colnames(dfmdd)
+MDD.counts=do.call("rbind",genocountsMDD)
+```
