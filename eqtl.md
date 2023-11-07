@@ -203,7 +203,10 @@ genocountsCT=lapply(colnames(dfct),function(x){
 reshape2::melt(table(dfct[,x]))
 })
 names(genocountsCT)=colnames(dfct)
-CT.counts=do.call("rbind",genocountsCT)
+CT.counts=data.frame(do.call("rbind",genocountsCT))
+CT.counts$SNP=gsub("\\.\\d{1}","",rownames(CT.counts))
+CT.counts=CT.counts[,c(3,1,2)]
+colnames(CT.counts)=c("SNP","genotype","N")
 
 # ED group
 dfed=df[rse_gene$Dx=='ED',]
@@ -211,7 +214,10 @@ genocountsED=lapply(colnames(dfed),function(x){
 reshape2::melt(table(dfed[,x]))
 })
 names(genocountsED)=colnames(dfed)
-ED.counts=do.call("rbind",genocountsED)
+ED.counts=data.frame(do.call("rbind",genocountsED))
+ED.counts$SNP=gsub("\\.\\d{1}","",rownames(ED.counts))
+ED.counts=ED.counts[,c(3,1,2)]
+colnames(ED.counts)=c("SNP","genotype","N")
 
 # MDD group
 dfmdd=df[rse_gene$Dx=='MDD',]
@@ -219,5 +225,10 @@ genocountsMDD=lapply(colnames(dfmdd),function(x){
 reshape2::melt(table(dfmdd[,x]))
 })
 names(genocountsMDD)=colnames(dfmdd)
-MDD.counts=do.call("rbind",genocountsMDD)
+MDD.counts=data.frame(do.call("rbind",genocountsMDD))
+MDD.counts$SNP=gsub("\\.\\d{1}","",rownames(MDD.counts))
+MDD.counts=MDD.counts[,c(3,1,2)]
+colnames(MDD.counts)=c("SNP","genotype","N")
+
+write_xlsx(list("CT"=CT.counts,"ED"=ED.counts,"MDD"=MDD.counts),"./genotypes_count.xlsx")
 ```
