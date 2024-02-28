@@ -80,10 +80,10 @@ colData(rse_gene)=cbind(colData(rse_gene),mds)
 #Get rid of confounders
 deleteVars <- c('mitoRate','rRNA_rate','totalAssignedGene','RIN')
 
-
-modQsva = model.matrix(~0 + Group + AgeDeath + overallMapRate +BMI+ qSVs[,1:2] + snpPC1+snpPC2+snpPC3, 
+rse_gene$Dx=factor(rse_gene$Dx,c("Control","MDD","ED"))
+modQsva = model.matrix(~0 + Dx + AgeDeath + overallMapRate +BMI+ qSVs[,1:2] + snpPC1+snpPC2+snpPC3, 
 		data = colData(rse_gene))
-colnames(modQsva)[1:3] = levels(rse_gene$Group)
+colnames(modQsva)[1:3] = levels(rse_gene$Dx)
 # modQsva = model.matrix(~0 + Group + AgeDeath + overallMapRate + BMI + qSVs[,1:3], data = colData(rse_gene))
 colnames(modQsva)[7:8]=c('PC1','PC2')
 
