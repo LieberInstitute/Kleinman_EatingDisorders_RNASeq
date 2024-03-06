@@ -1,5 +1,4 @@
 #volcano plots
-#based on C:\Users\licha\Documents\R\LIBD_VA_PTSD_RNAseq_4Region-main\R_scripts\Plotting\Volcano\volcano_plots.R
 
 library(SummarizedExperiment)
 library(readxl)
