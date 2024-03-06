@@ -16,11 +16,7 @@ library(writexl)
 
 setwd("/home/data1/R/ED/DE")
 
-load("ED_contrast_gene_n122.Rdata")
-# https://support.bioconductor.org/p/53177/
-
-# contrast fit is
-# cmtx <- makeContrasts( "MDD-Control", "ED-MDD","ED-Control", levels= modQsva)
+load("./DE/n127_ED_bmi_2qsvsPC_3snpPCs.rda")
 
 # coef=1 is topTable for MDD-Control
 mddct = topTable(eBayes(contrasts.fit(fitGene,cmtx)),number=nrow(rse_gene),coef=1)
