@@ -38,8 +38,7 @@ save(pr.score,file='n125_prs.rda')
 
 
 ### load expression data
-#load("/home/data1/R/ED/DE/n127_ED_bmi_2qsvsPC_3snpPCs.rda")
-load("/home/data1/R/ED/expr_cutoff/rse_gene_modified.Rdata") # Dx changed 3 people 20231031
+load("/home/data1/R/ED/expr_cutoff/rse_gene_modified.Rdata")
 load("n127_ED_bmi_2qsvs_3snpPCs.rda")
 
 ## align prs with rse_gene, exclude 2 controls
@@ -47,9 +46,8 @@ which(!rse_gene$BrNum %in% pr.score$BrNum)
 # [1]  5 57
 prs=pr.score[match(rse_gene$BrNum,pr.score$BrNum),]
 exp=vGene$E
-#prs$Group=rse_gene$Group
-#prs$group=sapply(prs$Group,unclass)
-prs$Group=rse_gene$Dx  # Dx changed 3 people 20231031
+
+prs$Group=rse_gene$Dx  
 prs$group=as.numeric(factor(prs$Group))
 
 
