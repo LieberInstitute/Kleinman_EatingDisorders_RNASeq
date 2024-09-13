@@ -235,6 +235,15 @@ done < $FILELIST
 # multiple cores
 parallel -j 4
 parallel -P 2
+
+parallel -j 10 Rscript /home/data1/R/twas/scripts/FUSION.compute_weights.R \
+   --bfile /home/data1/R/twas/ed/bim_files/gene_{}'/filtered_snps_gene_'{} \
+   --tmp tmp_files/gene_{} \
+   --out out_files/gene_{} \
+   --PATH_plink /home/data1/R/genotype/n2222/plink \
+   --PATH_gcta /home/ran/anaconda3/pkgs/gcta-1.94.1-h9ee0642_0/bin/gcta \
+   --PATH_gemma /home/ran/anaconda3/pkgs/gemma-0.98.3-hb4ccc14_0/bin/gemma \
+   --models top1,lasso --hsq_p 1.0001 --verbose 1 --save_hsq ::: {1..17656}
 ```
 
 ## 3. Merge Individual TWAS gene weights
