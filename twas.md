@@ -337,6 +337,14 @@ Rscript /home/data1/R/twas/scz/fusion_twas-master/FUSION.assoc_test.R \
     --chr 22 \
     --out AN_gwas/chr22.dat
 # same script for other chromosomes
+
+parallel -j 10 Rscript /home/data1/R/twas/scz/fusion_twas-master/FUSION.assoc_test.R \
+--sumstats /home/data1/R/twas/an/an.twas.backup \
+--weights /home/data1/R/twas/sinai_data/gene.pos \
+--weights_dir /home/data1/R/twas/sinai_data/ \
+--ref_ld_chr /home/data1/brainseq_phase2/reference_hg38/LDREF_hg38_libd/1000G.EUR. \
+--chr {} \
+--out AN_gwas/chr{}.dat ::: {1..10}
 ```
 
 
