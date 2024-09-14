@@ -294,7 +294,7 @@ pos_info <- data.frame(
     "CHR" = gsub("chr", "", seqnames(rowRanges(rse)[pos_match])),
     "P0" = start(rowRanges(rse)[pos_match]),
     "P1" = end(rowRanges(rse)[pos_match]),
-    "geneID" = mcols(rowRanges(rse))[, "gencodeID"][pos_match],
+    "geneID" = mcols(rowRanges(rse))[, "gencodeID"][pos_match],  # change to 'gene_id' with v30 gencode annotation
     stringsAsFactors = FALSE
 )
 
