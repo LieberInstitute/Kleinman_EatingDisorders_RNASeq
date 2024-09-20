@@ -445,7 +445,7 @@ don[[1]] <-
         summarise(chr_len = max(end)) %>%
         # Calculate cumulative position of each chromosome
         mutate(tot = cumsum(as.numeric(chr_len)) - chr_len) %>%
-        select(-chr_len) %>%
+        dplyr::select(-chr_len) %>%
         
         # Add this info to the initial dataset
         left_join(twas_z,
@@ -453,8 +453,8 @@ don[[1]] <-
                   by = c("CHR" = "CHR")) %>%
         
         # Add a cumulative position of each SNP
-        arrange(CHR, twas_mean_dist) %>%
-        mutate(BPcum = twas_mean_dist + tot)
+        arrange(CHR, twas_z$genetype) %>%  # arrange(CHR, twas_mean_dist) %>%
+        mutate(BPcum = twas_z$genetype + tot) # mutate(BPcum = twas_mean_dist + tot)
 
 axisdf[[1]] = don[[1]] %>% group_by(CHR) %>% summarise(center = (max(BPcum) + min(BPcum)) / 2)
 
